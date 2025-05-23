@@ -4,7 +4,6 @@ from models.supplier import Supplier
 class TestSupplierModel(unittest.TestCase):
     def setUp(self):
         self.supplier_name = "Test Supplier"
-        # Eliminar si ya existe
         existing = Supplier.get_by_name(self.supplier_name)
         if existing:
             existing.delete_supplier()

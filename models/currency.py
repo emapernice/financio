@@ -29,7 +29,7 @@ class Currency:
 
     def save_to_db(self):
         if self.code_exists():
-            print(f"⚠️ Currency code {self.currency_code} already exists in DB. Skipping insert.")
+            print(f"Currency code {self.currency_code} already exists in DB. Skipping insert.")
             return False
 
         conn = get_connection()
@@ -44,7 +44,7 @@ class Currency:
         self.currency_id = cursor.lastrowid
         cursor.close()
         conn.close()
-        print(f"✅ Currency inserted with ID {self.currency_id}")
+        print(f"Currency inserted with ID {self.currency_id}")
         return True
 
     @classmethod
@@ -58,7 +58,7 @@ class Currency:
         if row:
             return cls(**row)
         else:
-            print("❌ Currency not found.")
+            print("Currency not found.")
             return None
 
     @classmethod
@@ -72,16 +72,16 @@ class Currency:
         if row:
             return cls(**row)
         else:
-            print("❌ Currency not found.")
+            print("Currency not found.")
             return None
 
     def update_currency(self, new_name=None):
         if not self.currency_id:
-            print("❌ Cannot update: Currency has no ID assigned.")
+            print("Cannot update: Currency has no ID assigned.")
             return False
 
         if not new_name:
-            print("⚠️ No new name provided.")
+            print("No new name provided.")
             return False
 
         conn = get_connection()
@@ -92,12 +92,12 @@ class Currency:
         self.currency_name = new_name
         cursor.close()
         conn.close()
-        print("✅ Currency updated successfully.")
+        print("Currency updated successfully.")
         return True
 
     def delete_currency(self):
         if not self.currency_id:
-            print("❌ Cannot delete: Currency has no ID assigned.")
+            print("Cannot delete: Currency has no ID assigned.")
             return False
 
         conn = get_connection()
@@ -106,5 +106,5 @@ class Currency:
         conn.commit()
         cursor.close()
         conn.close()
-        print("🗑️ Currency deleted successfully.")
+        print("Currency deleted successfully.")
         return True

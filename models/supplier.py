@@ -27,7 +27,7 @@ class Supplier:
 
     def save_to_db(self):
         if self.name_exists():
-            print(f"⚠️ Supplier name {self.supplier_name} already exists in DB. Skipping insert.")
+            print(f"Supplier name {self.supplier_name} already exists in DB. Skipping insert.")
             return False
 
         conn = get_connection()
@@ -42,7 +42,7 @@ class Supplier:
         self.supplier_id = cursor.lastrowid
         cursor.close()
         conn.close()
-        print(f"✅ Supplier inserted with ID {self.supplier_id}")
+        print(f"Supplier inserted with ID {self.supplier_id}")
         return True
 
     @classmethod
@@ -56,7 +56,7 @@ class Supplier:
         if row:
             return cls(**row)
         else:
-            print("❌ Supplier not found.")
+            print("Supplier not found.")
             return None
 
     @classmethod
@@ -70,16 +70,16 @@ class Supplier:
         if row:
             return cls(**row)
         else:
-            print("❌ Supplier not found.")
+            print("Supplier not found.")
             return None
 
     def update_supplier(self, new_name=None, new_description=None):
         if not self.supplier_id:
-            print("❌ Cannot update: Supplier has no ID assigned.")
+            print("Cannot update: Supplier has no ID assigned.")
             return False
 
         if not new_name and new_description is None:
-            print("⚠️ No data provided to update.")
+            print("No data provided to update.")
             return False
 
         conn = get_connection()
@@ -97,12 +97,12 @@ class Supplier:
             self.supplier_description = new_description
         cursor.close()
         conn.close()
-        print("✅ Supplier updated successfully.")
+        print("Supplier updated successfully.")
         return True
 
     def delete_supplier(self):
         if not self.supplier_id:
-            print("❌ Cannot delete: Supplier has no ID assigned.")
+            print("Cannot delete: Supplier has no ID assigned.")
             return False
 
         conn = get_connection()
@@ -111,5 +111,5 @@ class Supplier:
         conn.commit()
         cursor.close()
         conn.close()
-        print("🗑️ Supplier deleted successfully.")
+        print("Supplier deleted successfully.")
         return True

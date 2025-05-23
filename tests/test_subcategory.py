@@ -4,7 +4,6 @@ from models.category import Category
 
 class TestSubcategoryModel(unittest.TestCase):
     def setUp(self):
-        # Crear categoría para FK
         self.category_name = "Category for Subcat Test"
         existing_cat = Category.get_by_name(self.category_name)
         if existing_cat:
@@ -13,7 +12,6 @@ class TestSubcategoryModel(unittest.TestCase):
         self.category.save_to_db()
 
         self.subcategory_name = "Test Subcategory"
-        # Limpiar si ya existe
         existing_subcat = Subcategory.get_by_name_and_category(self.subcategory_name, self.category.category_id)
         if existing_subcat:
             existing_subcat.delete_subcategory()
@@ -53,7 +51,6 @@ class TestSubcategoryModel(unittest.TestCase):
         self.assertIsNone(deleted)
 
     def tearDown(self):
-        # Limpieza: borrar subcategory y category
         subcat = Subcategory.get_by_name_and_category(self.subcategory_name, self.category.category_id)
         if subcat:
             subcat.delete_subcategory()
@@ -62,16 +59,13 @@ class TestSubcategoryModel(unittest.TestCase):
             cat.delete_category()
 
     def test_cascade_delete_subcategory_on_category_deletion(self):
-        # Verificar que la subcategoría está en la DB
         from models.subcategory import Subcategory
         sub = Subcategory.get_by_name_and_category("Test Subcategory", self.category.category_id)
         self.assertIsNotNone(sub)
 
-        # Eliminar categoría (debería eliminar también la subcategoría)
         result = self.category.delete_category()
         self.assertTrue(result)
 
-        # Verificar que la subcategoría ya no existe
         deleted_sub = Subcategory.get_by_name_and_category("Test Subcategory", self.category.category_id)
         self.assertIsNone(deleted_sub)        
 

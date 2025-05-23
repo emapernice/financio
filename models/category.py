@@ -44,7 +44,7 @@ class Category:
         self.category_id = cursor.lastrowid
         cursor.close()
         conn.close()
-        print(f"✅ Category inserted with ID {self.category_id}")
+        print(f"Category inserted with ID {self.category_id}")
         return True
 
     @classmethod
@@ -58,7 +58,7 @@ class Category:
         if row:
             return cls(**row)
         else:
-            print("❌ Category not found.")
+            print("Category not found.")
             return None
 
     @classmethod
@@ -67,22 +67,22 @@ class Category:
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM categories WHERE category_name = %s", (name,))
         row = cursor.fetchone()
-        cursor.fetchall()  # Descarta resultados restantes si hay
+        cursor.fetchall() 
         cursor.close()
         conn.close()
         if row:
             return cls(**row)
         else:
-            print("❌ Category not found.")
+            print("Category not found.")
             return None
 
     def update_category(self, new_name=None, new_type=None):
         if not self.category_id:
-            print("❌ Cannot update: Category has no ID assigned.")
+            print("Cannot update: Category has no ID assigned.")
             return False
 
         if not new_name and not new_type:
-            print("⚠️ No new data provided.")
+            print("No new data provided.")
             return False
 
         conn = get_connection()
@@ -98,25 +98,23 @@ class Category:
         conn.commit()
         cursor.close()
         conn.close()
-        print("✅ Category updated successfully.")
+        print("Category updated successfully.")
         return True
 
     def delete_category(self):
         if not self.category_id:
-            print("❌ Cannot delete: Category has no ID assigned.")
+            print("Cannot delete: Category has no ID assigned.")
             return False
 
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Paso 1: Borrar subcategorías relacionadas
         cursor.execute("DELETE FROM subcategories WHERE category_id = %s", (self.category_id,))
-        print("🗑️ Related subcategories deleted.")
+        print("Related subcategories deleted.")
 
-        # Paso 2: Borrar la categoría
         cursor.execute("DELETE FROM categories WHERE category_id = %s", (self.category_id,))
         conn.commit()
         cursor.close()
         conn.close()
-        print("🗑️ Category deleted successfully.")
+        print("Category deleted successfully.")
         return True

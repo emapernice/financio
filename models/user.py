@@ -29,7 +29,7 @@ class User:
 
     def save_to_db(self):
         if self.email_exists():
-            print(f"⚠️ Email {self.user_email} already exists in DB. Skipping insert.")
+            print(f"Email {self.user_email} already exists in DB. Skipping insert.")
             return False
 
         conn = get_connection()
@@ -44,7 +44,7 @@ class User:
         self.user_id = cursor.lastrowid
         cursor.close()
         conn.close()
-        print(f"✅ User inserted with ID {self.user_id}")
+        print(f"User inserted with ID {self.user_id}")
         return True
 
     @classmethod
@@ -58,7 +58,7 @@ class User:
         if row:
             return cls(**row)
         else:
-            print("❌ User not found.")
+            print("User not found.")
             return None
 
     @classmethod
@@ -72,12 +72,12 @@ class User:
         if row:
             return cls(**row)
         else:
-            print("❌ User not found.")
+            print("User not found.")
             return None
 
     def update_user(self, new_name=None, new_email=None):
         if not self.user_id:
-            print("❌ Cannot update: User has no ID assigned.")
+            print("Cannot update: User has no ID assigned.")
             return False
 
         conn = get_connection()
@@ -94,7 +94,7 @@ class User:
         if new_email:
             cursor.execute("SELECT user_id FROM users WHERE user_email = %s AND user_id != %s", (new_email, self.user_id))
             if cursor.fetchone():
-                print(f"⚠️ The email {new_email} is already in use by another user.")
+                print(f"The email {new_email} is already in use by another user.")
                 cursor.close()
                 conn.close()
                 return False
@@ -103,7 +103,7 @@ class User:
             self.user_email = new_email
 
         if not updates:
-            print("⚠️ There are no fields to update.")
+            print("There are no fields to update.")
             cursor.close()
             conn.close()
             return False
@@ -114,12 +114,12 @@ class User:
         conn.commit()
         cursor.close()
         conn.close()
-        print("✅ User updated successfully.")
+        print("User updated successfully.")
         return True
 
     def delete_user(self):
         if not self.user_id:
-            print("❌ Cannot delete: User has no ID assigned.")
+            print("Cannot delete: User has no ID assigned.")
             return False
 
         conn = get_connection()
@@ -128,5 +128,5 @@ class User:
         conn.commit()
         cursor.close()
         conn.close()
-        print("🗑️ User deleted successfully.")
+        print("User deleted successfully.")
         return True

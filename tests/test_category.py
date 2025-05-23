@@ -43,20 +43,16 @@ class TestCategoryModel(unittest.TestCase):
         self.assertIsNone(deleted)
 
     def test_delete_category_with_subcategories(self):
-        # Crear subcategoría vinculada a la categoría creada en setUp
         from models.subcategory import Subcategory
         sub = Subcategory(subcategory_name="Sub A", category_id=self.category.category_id)
         sub.save_to_db()
 
-        # Verificar que existe en la DB
         existing_sub = Subcategory.get_by_name_and_category("Sub A", self.category.category_id)
         self.assertIsNotNone(existing_sub)
 
-        # Eliminar categoría
         result = self.category.delete_category()
         self.assertTrue(result)
 
-        # Confirmar que también se eliminó la subcategoría
         deleted_sub = Subcategory.get_by_name_and_category("Sub A", self.category.category_id)
         self.assertIsNone(deleted_sub)    
 

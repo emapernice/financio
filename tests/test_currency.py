@@ -4,7 +4,6 @@ from models.currency import Currency
 class TestCurrencyModel(unittest.TestCase):
     def setUp(self):
         self.currency_code = "USD"
-        # Limpiar si ya existe
         existing = Currency.get_by_code(self.currency_code)
         if existing:
             existing.delete_currency()

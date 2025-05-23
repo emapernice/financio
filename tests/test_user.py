@@ -4,7 +4,6 @@ from models.user import User
 class TestUserModel(unittest.TestCase):
     def setUp(self):
         self.test_email = "testuser@example.com"
-        # Limpiar si ya existe
         existing = User.get_by_email(self.test_email)
         if existing:
             existing.delete_user()
@@ -27,10 +26,8 @@ class TestUserModel(unittest.TestCase):
         self.assertEqual(user_by_id.user_id, user_by_email.user_id)
 
     def test_update_user(self):
-        # Crear usuario temporal
         temp_email = "tempuser@example.com"
         
-        # Si ya existe, eliminarlo
         existing = User.get_by_email(temp_email)
         if existing:
             existing.delete_user()
@@ -43,7 +40,6 @@ class TestUserModel(unittest.TestCase):
         updated_user = User.get_by_id(temp_user.user_id)
         self.assertEqual(updated_user.user_name, "Updated Name")
 
-        # Eliminar usuario temporal después del test
         temp_user.delete_user()
 
     def test_delete_user(self):

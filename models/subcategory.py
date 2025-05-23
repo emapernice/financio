@@ -29,7 +29,7 @@ class Subcategory:
 
     def save_to_db(self):
         if self.name_exists():
-            print(f"⚠️ Subcategory name {self.subcategory_name} already exists in DB for category {self.category_id}. Skipping insert.")
+            print(f"Subcategory name {self.subcategory_name} already exists in DB for category {self.category_id}. Skipping insert.")
             return False
 
         conn = get_connection()
@@ -44,7 +44,7 @@ class Subcategory:
         self.subcategory_id = cursor.lastrowid
         cursor.close()
         conn.close()
-        print(f"✅ Subcategory inserted with ID {self.subcategory_id}")
+        print(f"Subcategory inserted with ID {self.subcategory_id}")
         return True
 
     @classmethod
@@ -58,7 +58,7 @@ class Subcategory:
         if row:
             return cls(**row)
         else:
-            print("❌ Subcategory not found.")
+            print("Subcategory not found.")
             return None
         
     @classmethod
@@ -73,16 +73,16 @@ class Subcategory:
         if row:
             return cls(**row)
         else:
-            print("❌ Subcategory not found.")
+            print("Subcategory not found.")
             return None    
 
     def update_subcategory(self, new_name=None, new_category_id=None):
         if not self.subcategory_id:
-            print("❌ Cannot update: Subcategory has no ID assigned.")
+            print("Cannot update: Subcategory has no ID assigned.")
             return False
 
         if not new_name and not new_category_id:
-            print("⚠️ No new data provided.")
+            print("No new data provided.")
             return False
 
         if new_name:
@@ -97,12 +97,12 @@ class Subcategory:
         conn.commit()
         cursor.close()
         conn.close()
-        print("✅ Subcategory updated successfully.")
+        print("Subcategory updated successfully.")
         return True
 
     def delete_subcategory(self):
         if not self.subcategory_id:
-            print("❌ Cannot delete: Subcategory has no ID assigned.")
+            print("Cannot delete: Subcategory has no ID assigned.")
             return False
 
         conn = get_connection()
@@ -111,5 +111,5 @@ class Subcategory:
         conn.commit()
         cursor.close()
         conn.close()
-        print("🗑️ Subcategory deleted successfully.")
+        print("Subcategory deleted successfully.")
         return True
