@@ -1,8 +1,8 @@
 from django.db import models
 
 class Currency(models.Model):
-    currency_name = models.CharField(max_length=50, unique=True)        # Ej: Dólar estadounidense
-    currency_code = models.CharField(max_length=3, unique=True)         # Ej: USD, ARS
+    currency_name = models.CharField(max_length=50, unique=True) 
+    currency_code = models.CharField(max_length=3, unique=True)      
 
     def __str__(self):
         return f"{self.currency_code} - {self.currency_name}"
