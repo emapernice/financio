@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %} Transfer Detail {% endblock %}
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Transfer Detail</h4>
+    </div>
+    <div class="card-body">
+        <ul class="list-group mb-3">
+            <li class="list-group-item"><strong>From:</strong> {{ transfer.from_account.account_name }}</li>
+            <li class="list-group-item"><strong>To:</strong> {{ transfer.to_account.account_name }}</li>
+            <li class="list-group-item"><strong>Amount:</strong> {{ transfer.transfer_amount }}</li>
+            <li class="list-group-item"><strong>Description:</strong> {{ transfer.transfer_description }}</li>
+        </ul>
+
+        <a href="{% url 'accounts:transfer_update' transfer.pk %}" class="btn btn-primary">Update</a>
+        <a href="{% url 'accounts:transfer_delete' transfer.pk %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'accounts:transfer_list' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

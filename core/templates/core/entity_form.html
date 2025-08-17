@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Entity{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">{{ form.instance.pk|yesno:"Edit Entity,Create Entity" }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {# Campo entity_type renderizado primero #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.entity_type.id_for_label }}">Entity Type</label>
+                    {{ form.entity_type }}
+                    {% if form.entity_type.errors %}
+                        <div class="text-danger small">{{ form.entity_type.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Resto de los campos, excluyendo entity_type #}
+                {% for field in form %}
+                    {% if field.name != 'entity_type' %}
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <button type="submit" class="btn btn-success">Save</button>
+                <a href="{% url 'core:entity_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

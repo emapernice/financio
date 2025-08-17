@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %} Accounts {% endblock %}
+{% block content %} 
+
+<div class="card">
+    <div class="card-header">
+        <a class="btn btn-success" href="{% url 'accounts:account_create' %}" role="button">Create Account</a>
+    </div>
+    <h4 class="card-title m-3">Accounts</h4>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Currency</th>
+                    <th>Initial Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for account in accounts %}
+                <tr>
+                    <td>{{ account.account_name }}</td>
+                    <td>{{ account.get_account_type_display }}</td>
+                    <td>{{ account.currency.currency_code }}</td>
+                    <td>{{ account.initial_balance }}</td>
+                  <td>
+                    <a href="{% url 'accounts:account_detail' account.pk %}" class="btn btn-success">View</a>
+                    <a href="{% url 'accounts:account_update' account.pk %}" class="btn btn-primary">Update</a>
+                    <a href="{% url 'accounts:account_delete' account.pk %}" class="btn btn-danger">Delete</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="7" class="text-center">No accounts available.</td></tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

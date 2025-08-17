@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %} Entities {% endblock %}
+{% block content %} 
+
+<div class="card">
+    <div class="card-header">
+        <a class="btn btn-success" href="{% url 'core:entity_create' %}" role="button">Create Entity</a>
+    </div>
+    <h4 class="card-title m-3">Entities</h4>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Type</th>  {# Nueva columna para entity_type #}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for entity in entities %}
+                <tr>
+                    <td>{{ entity.entity_name }}</td>
+                    <td>{{ entity.entity_description }}</td>
+                    <td>{{ entity.get_entity_type_display }}</td>  {# Muestra el label legible #}
+                    <td>
+                        <a href="{% url 'core:entity_update' entity.pk %}" class="btn btn-primary">Update</a>
+                        <a href="{% url 'core:entity_delete' entity.pk %}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4" class="text-center">No entities available.</td></tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %} Transfers {% endblock %}
+{% block content %} 
+
+<div class="card">
+    <div class="card-header">
+        <a class="btn btn-success" href="{% url 'accounts:transfer_create' %}" role="button">Create Transfer</a>
+    </div>
+    <h4 class="card-title m-3">Transfers</h4>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transfer in transfers %}
+                <tr>
+                    <td>{{ transfer.from_account.account_name }}</td>
+                    <td>{{ transfer.to_account.account_name }}</td>
+                    <td>{{ transfer.transfer_amount }}</td>
+                    <td>{{ transfer.transfer_description }}</td>
+                    <td>
+                        <a href="{% url 'accounts:transfer_detail' transfer.pk %}" class="btn btn-success">View</a>
+                        <a href="{% url 'accounts:transfer_update' transfer.pk %}" class="btn btn-primary">Update</a>
+                        <a href="{% url 'accounts:transfer_delete' transfer.pk %}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5">No transfers available.</td></tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

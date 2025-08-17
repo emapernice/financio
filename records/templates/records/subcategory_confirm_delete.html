@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %} Delete Subcategory {% endblock %}
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Delete Subcategory</h4>
+    </div>
+    <div class="card-body">
+        <p>Are you sure you want to delete this subcategory?</p>
+        <ul>
+            <li><strong>Name:</strong> {{ subcategory.subcategory_name }}</li>
+            <li><strong>Description:</strong> {{ subcategory.subcategory_description|default:"(No description)" }}</li>
+            <li><strong>Category:</strong> {{ subcategory.category.category_name }}</li>
+        </ul>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'records:subcategory_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

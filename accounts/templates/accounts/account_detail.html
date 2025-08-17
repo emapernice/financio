@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %} Account Detail {% endblock %}
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Account Detail</h4>
+    </div>
+    <div class="card-body">
+        <ul class="list-group mb-3">
+            <li class="list-group-item"><strong>Name:</strong> {{ account.account_name }}</li>
+            <li class="list-group-item"><strong>Type:</strong> {{ account.get_account_type_display }}</li>
+            <li class="list-group-item"><strong>Currency:</strong> {{ account.currency.currency_code }}</li>
+            <li class="list-group-item"><strong>Initial Balance:</strong> {{ account.initial_balance }}</li>
+        </ul>
+
+        <a href="{% url 'accounts:account_update' account.pk %}" class="btn btn-primary">Update</a>
+        <a href="{% url 'accounts:account_delete' account.pk %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'accounts:account_list' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

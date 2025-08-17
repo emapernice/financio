@@ -10,13 +10,13 @@ class Currency(models.Model):
 
 class Entity(models.Model):
     ENTITY_TYPES = [
-        ('SUPPLIER', 'Proveedor'),
-        ('INCOME_SOURCE', 'Fuente de ingreso'),
+        ('SUPPLIER', 'Supplier'),
+        ('INCOME_SOURCE', 'Source of income'),
     ]
 
     entity_name = models.CharField(max_length=100)
     entity_description = models.TextField(blank=True)
-    entity_type = models.CharField(max_length=20, choices=ENTITY_TYPES)
+    entity_type = models.CharField(max_length=20, choices=ENTITY_TYPES, blank=False, null=False, default='SUPPLIER')
 
     def __str__(self):
         return f"{self.entity_name} ({self.get_entity_type_display()})"
