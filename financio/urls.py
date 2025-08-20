@@ -23,4 +23,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('records/', include('records.urls', namespace='records')),
     path('core/', include('core.urls', namespace='core')),
+    path('fixed/', include('fixed.urls', namespace='fixed')),
+    path('budgets/', include('budgets.urls', namespace='budgets')),
+    path('investments/', include('investments.urls', namespace='investments')),
 ]

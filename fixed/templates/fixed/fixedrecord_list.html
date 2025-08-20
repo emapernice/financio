@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %} Fixed Records {% endblock %}
+{% block content %} 
+
+<div class="card">
+    <div class="card-header">
+        <a class="btn btn-success" href="{% url 'fixed:fixedrecord_create' %}" role="button">Create Fixed Record</a>
+    </div>
+    <h4 class="card-title m-3">Fixed Records</h4>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Account</th>
+                    <th>Subcategory</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Frequency</th>
+                    <th>Next Execution</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fixedrecord in fixedrecords %}
+                <tr>
+                    <td>{{ fixedrecord.account.account_name }}</td>
+                    <td>{{ fixedrecord.subcategory.subcategory_name|default:"-" }}</td>
+                    <td>{{ fixedrecord.get_record_type_display }}</td>
+                    <td>{{ fixedrecord.amount }}</td>
+                    <td>{{ fixedrecord.get_frequency_display }}</td>
+                    <td>{{ fixedrecord.next_execution }}</td>
+                    <td>
+                        {% if fixedrecord.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'fixed:fixedrecord_update' fixedrecord.pk %}" class="btn btn-primary btn-sm">Update</a>
+                        <a href="{% url 'fixed:fixedrecord_delete' fixedrecord.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="8" class="text-center">No fixed records available.</td></tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

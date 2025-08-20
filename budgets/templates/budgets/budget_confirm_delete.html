@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %} Delete Budget {% endblock %}
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Delete Budget</h4>
+    </div>
+    <div class="card-body">
+        <p>Are you sure you want to delete the budget 
+           "<strong>{{ budget }}</strong>"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'budgets:budget_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

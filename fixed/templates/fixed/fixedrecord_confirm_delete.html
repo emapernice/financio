@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %} Delete Fixed Record {% endblock %}
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Delete Fixed Record</h4>
+    </div>
+    <div class="card-body">
+        <p>Are you sure you want to delete the fixed record 
+           "<strong>{{ fixedrecord }}</strong>"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'fixed:fixedrecord_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}
