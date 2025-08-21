@@ -26,4 +26,5 @@ urlpatterns = [
     path('fixed/', include('fixed.urls', namespace='fixed')),
     path('budgets/', include('budgets.urls', namespace='budgets')),
     path('investments/', include('investments.urls', namespace='investments')),
+    path('transfers/', include('transfers.urls', namespace='transfers')),
 ]

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'accounts',
     'records',
+    'transfers',
     'fixed',
     'budgets',
     'investments',
