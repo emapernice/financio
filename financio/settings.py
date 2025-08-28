@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'fixed',
     'budgets',
     'investments',
-    "django_crontab",
+    'django_crontab',
+    'dashboard',
 ]
 
 MIDDLEWARE = [

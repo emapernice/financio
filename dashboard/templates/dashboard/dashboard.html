@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Dashboard</h1>
+
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Balances by Currency</h5>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>Currency</th>
+                  <th>Available</th>
+                  <th>Total Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for code, data in balances_by_currency.items %}
+                  {% with code_slug=code|slugify %}
+                  <tr>
+                    <td>
+                      <a href="#"
+                         data-bs-toggle="modal"
+                         data-bs-target="#currencyModal{{ code_slug }}">
+                        <strong>{{ code }}</strong>
+                      </a>
+                    </td>
+                    <td>${{ data.available|floatformat:2 }}</td>
+                    <td><strong>${{ data.available|add:data.inv_total|floatformat:2 }}</strong></td>
+                  </tr>
+                  {% endwith %}
+                {% empty %}
+                  <tr>
+                    <td colspan="3">No balances available.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {% for code, data in balances_by_currency.items %}
+        {% with code_slug=code|slugify %}
+        <div class="modal fade" id="currencyModal{{ code_slug }}" tabindex="-1"
+             aria-labelledby="currencyModalLabel{{ code_slug }}" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="currencyModalLabel{{ code_slug }}">Details for {{ code }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Available</th>
+                      <th>Invest. Capital</th>
+                      <th>Invest. Interest</th>
+                      <th>Invest. Total</th>
+                      <th>Total Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>${{ data.available|floatformat:2 }}</td>
+                      <td>${{ data.inv_capital|floatformat:2 }}</td>
+                      <td>${{ data.inv_interest|floatformat:2 }}</td>
+                      <td>${{ data.inv_total|floatformat:2 }}</td>
+                      <td><strong>${{ data.available|add:data.inv_total|floatformat:2 }}</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Accounts Overview</h5>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Available</th>
+                  <th>Total Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for acc in accounts_data %}
+                  {% with acc_slug=acc.account.account_name|slugify %}
+                  <tr>
+                    <td>
+                      <a href="#"
+                         data-bs-toggle="modal"
+                         data-bs-target="#accountModal{{ acc_slug }}">
+                        {{ acc.account.account_name }} ({{ acc.account.get_account_type_display }})
+                      </a>
+                    </td>
+                    <td>${{ acc.available|floatformat:2 }}</td>
+                    <td><strong>${{ acc.total_balance|floatformat:2 }}</strong></td>
+                  </tr>
+                  {% endwith %}
+                {% empty %}
+                  <tr>
+                    <td colspan="3">No accounts available.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <a href="{% url 'accounts:account_list' %}" class="btn btn-sm btn-primary">View accounts</a>
+        </div>
+      </div>
+
+      {% for acc in accounts_data %}
+        {% with acc_slug=acc.account.account_name|slugify %}
+        <div class="modal fade" id="accountModal{{ acc_slug }}" tabindex="-1"
+             aria-labelledby="accountModalLabel{{ acc_slug }}" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="accountModalLabel{{ acc_slug }}">
+                  Details for {{ acc.account.account_name }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Available</th>
+                      <th>Income</th>
+                      <th>Expense</th>
+                      <th>Invest. Capital</th>
+                      <th>Invest. Interest</th>
+                      <th>Invest. Total</th>
+                      <th>Total Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>${{ acc.available|floatformat:2 }}</td>
+                      <td class="text-success">+${{ acc.income|floatformat:2 }}</td>
+                      <td class="text-danger">-${{ acc.expense|floatformat:2 }}</td>
+                      <td>${{ acc.inv_capital|floatformat:2 }}</td>
+                      <td>${{ acc.inv_interest|floatformat:2 }}</td>
+                      <td>${{ acc.inv_total|floatformat:2 }}</td>
+                      <td><strong>${{ acc.total_balance|floatformat:2 }}</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
