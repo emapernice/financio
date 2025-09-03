@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Currency, Entity
-from .forms import CurrencyForm, EntityForm
+from .models import Currency, Entity, CurrencyExchange
+from .forms import CurrencyForm, EntityForm, CurrencyExchangeForm
 
 @login_required
 def currency_list(request):
@@ -88,3 +88,46 @@ def entity_delete(request, pk):
         messages.success(request, "Entity deleted successfully.")
         return redirect('core:entity_list')
     return render(request, 'core/entity_confirm_delete.html', {'entity': entity})
+
+
+@login_required
+def exchange_list(request):
+    exchanges = CurrencyExchange.objects.all()
+    return render(request, 'core/exchange_list.html', {'exchanges': exchanges})
+
+
+@login_required
+def exchange_create(request):
+    if request.method == 'POST':
+        form = CurrencyExchangeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Exchange created successfully.")
+            return redirect('core:exchange_list')
+    else:
+        form = CurrencyExchangeForm()
+    return render(request, 'core/exchange_form.html', {'form': form})
+
+
+@login_required
+def exchange_update(request, pk):
+    exchange = get_object_or_404(CurrencyExchange, pk=pk)
+    if request.method == 'POST':
+        form = CurrencyExchangeForm(request.POST, instance=exchange)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Exchange updated successfully.")
+            return redirect('core:exchange_list')
+    else:
+        form = CurrencyExchangeForm(instance=exchange)
+    return render(request, 'core/exchange_form.html', {'form': form})
+
+
+@login_required
+def exchange_delete(request, pk):
+    exchange = get_object_or_404(CurrencyExchange, pk=pk)
+    if request.method == 'POST':
+        exchange.delete()
+        messages.success(request, "Exchange deleted successfully.")
+        return redirect('core:exchange_list')
+    return render(request, 'core/exchange_confirm_delete.html', {'exchange': exchange})

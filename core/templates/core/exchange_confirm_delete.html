@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Delete Exchange{% endblock %}
+{% block content %}
+
+<div class="card mt-4 shadow-sm">
+    <div class="card-header">
+        <h4 class="mb-0">Delete Exchange</h4>
+    </div>
+    <div class="card-body">
+        <p>
+            Are you sure you want to delete the exchange of
+            <strong>{{ exchange.from_amount }} {{ exchange.from_currency }}</strong>
+            →
+            <strong>{{ exchange.to_amount }} {{ exchange.to_currency }}</strong><br>
+            (from <strong>{{ exchange.from_account }}</strong> to <strong>{{ exchange.to_account }}</strong>)?
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mt-3">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'core:exchange_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

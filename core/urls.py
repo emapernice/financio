@@ -13,4 +13,9 @@ urlpatterns = [
     path('entity/create/', views.entity_create, name='entity_create'),
     path('entity/update/<int:pk>/', views.entity_update, name='entity_update'),
     path('entity/delete/<int:pk>/', views.entity_delete, name='entity_delete'),
+
+    path('exchange/', views.exchange_list, name='exchange_list'),
+    path('exchange/create/', views.exchange_create, name='exchange_create'),
+    path('exchange/update/<int:pk>/', views.exchange_update, name='exchange_update'),
+    path('exchange/delete/<int:pk>/', views.exchange_delete, name='exchange_delete'),
 ]

@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import Account
-from core.models import Currency, Entity
+from core.models import Currency, Entity, CurrencyExchange
 
 
 class Category(models.Model):
@@ -18,7 +18,7 @@ class Category(models.Model):
         ]
 
     def __str__(self):
-        return self.category_name
+        return f"{self.category_name} ({self.category_type})"
 
 
 class Subcategory(models.Model):
@@ -47,12 +47,18 @@ class Record(models.Model):
     account = models.ForeignKey(
         Account, on_delete=models.CASCADE, related_name='records'
     )
+    
     transfer = models.ForeignKey(
         "transfers.Transfer", on_delete=models.CASCADE, null=True, blank=True, related_name="records"
     )
     transfer_account = models.ForeignKey(
-        Account, on_delete=models.CASCADE, null=True, blank=True, related_name='transfer_records'
+        Account, on_delete=models.CASCADE, null=True, blank=True, related_name='records_as_transfer_account'
     )
+
+    exchange = models.ForeignKey(
+        CurrencyExchange, on_delete=models.CASCADE, null=True, blank=True, related_name="records"
+    )
+
     record_amount = models.DecimalField(max_digits=12, decimal_places=2)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
     entity = models.ForeignKey(Entity, on_delete=models.PROTECT, null=True, blank=True)
@@ -76,8 +82,11 @@ class Record(models.Model):
         if not self.transfer and self.transfer_account:
             raise ValidationError("Non-transfer records cannot have a transfer_account.")
 
+        if self.transfer and self.exchange:
+            raise ValidationError("A record cannot belong to both a transfer and an exchange.")
+
     def __str__(self):
         return (
-            f"{self.record_type.title()} {self.record_amount} {self.currency} "
+            f"{self.record_type.title()} {self.record_amount} {self.currency.currency_code} "
             f"({self.account}) on {self.record_date}"
         )

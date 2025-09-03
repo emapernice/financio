@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Exchange{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">
+                {% if form.instance.pk %}
+                    Edit Exchange
+                {% else %}
+                    Create Exchange
+                {% endif %}
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {# Campo from_account primero #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.from_account.id_for_label }}">From Account</label>
+                    {{ form.from_account }}
+                    {% if form.from_account.errors %}
+                        <div class="text-danger small">{{ form.from_account.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Resto de los campos, excluyendo from_account #}
+                {% for field in form %}
+                    {% if field.name != 'from_account' and field.name != 'created_at' %}
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <button type="submit" class="btn btn-success">Save</button>
+                <a href="{% url 'core:exchange_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

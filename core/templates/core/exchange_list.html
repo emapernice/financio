@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %} Currency Exchanges {% endblock %}
+{% block content %} 
+
+<div class="card">
+    <div class="card-header">
+        <a class="btn btn-success" href="{% url 'core:exchange_create' %}" role="button">Create Exchange</a>
+    </div>
+    <h4 class="card-title m-3">Currency Exchanges</h4>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>From Account</th>
+                    <th>To Account</th>
+                    <th>From Currency</th>
+                    <th>To Currency</th>
+                    <th>From Amount</th>
+                    <th>To Amount</th>
+                    <th>Rate</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for exchange in exchanges %}
+                <tr>
+                    <td>{{ exchange.from_account }}</td>
+                    <td>{{ exchange.to_account }}</td>
+                    <td>{{ exchange.from_currency }}</td>
+                    <td>{{ exchange.to_currency }}</td>
+                    <td>{{ exchange.from_amount }}</td>
+                    <td>{{ exchange.to_amount }}</td>
+                    <td>{{ exchange.exchange_rate }}</td>
+                    <td>{{ exchange.exchange_date|date:"Y-m-d" }}</td>
+                    <td>
+                        <a href="{% url 'core:exchange_update' exchange.pk %}" class="btn btn-primary btn-sm">Update</a>
+                        <a href="{% url 'core:exchange_delete' exchange.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="9" class="text-center">No exchanges available.</td></tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}
