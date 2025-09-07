@@ -46,10 +46,10 @@ INSTALLED_APPS = [
     'accounts',
     'records',
     'transfers',
+    'django_crontab',
     'fixed',
     'budgets',
     'investments',
-    'django_crontab',
     'dashboard',
 ]
 
@@ -154,5 +154,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 CRONJOBS = [
+    ('5 0 * * *', 'fixed.cron.process_fixed_records', '>> /tmp/fixed_cron.log 2>&1'),
     ('5 0 * * *', 'investments.cron.close_expired_investments', '>> /tmp/investments_cron.log 2>&1'),
 ]

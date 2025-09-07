@@ -14,8 +14,10 @@
                     <th>Account</th>
                     <th>Subcategory</th>
                     <th>Type</th>
-                    <th>Amount</th>
+                    <th class="text-end">Amount</th>
                     <th>Frequency</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
                     <th>Next Execution</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -27,9 +29,11 @@
                     <td>{{ fixedrecord.account.account_name }}</td>
                     <td>{{ fixedrecord.subcategory.subcategory_name|default:"-" }}</td>
                     <td>{{ fixedrecord.get_record_type_display }}</td>
-                    <td>{{ fixedrecord.amount }}</td>
+                    <td class="text-end">{{ fixedrecord.amount }}</td>
                     <td>{{ fixedrecord.get_frequency_display }}</td>
-                    <td>{{ fixedrecord.next_execution }}</td>
+                    <td>{{ fixedrecord.start_date|date:"d/m/Y" }}</td>
+                    <td>{{ fixedrecord.end_date|date:"d/m/Y"|default:"-" }}</td>
+                    <td>{{ fixedrecord.next_execution|date:"d/m/Y" }}</td>
                     <td>
                         {% if fixedrecord.is_active %}
                             <span class="badge bg-success">Active</span>
@@ -43,7 +47,7 @@
                     </td>
                 </tr>
               {% empty %}
-                <tr><td colspan="8" class="text-center">No fixed records available.</td></tr>
+                <tr><td colspan="10" class="text-center">No fixed records available.</td></tr>
               {% endfor %}
             </tbody>
         </table>

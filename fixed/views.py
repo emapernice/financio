@@ -7,7 +7,7 @@ from .forms import FixedRecordForm
 
 @login_required
 def fixedrecord_list(request):
-    fixedrecords = FixedRecord.objects.all()
+    fixedrecords = FixedRecord.objects.filter(account__user=request.user)
     return render(request, 'fixed/fixedrecord_list.html', {'fixedrecords': fixedrecords})
 
 
@@ -16,7 +16,11 @@ def fixedrecord_create(request):
     if request.method == 'POST':
         form = FixedRecordForm(request.POST)
         if form.is_valid():
-            form.save()
+            fixedrecord = form.save(commit=False)
+            if fixedrecord.account.user != request.user:
+                messages.error(request, "You cannot assign fixed records to accounts that are not yours.")
+                return redirect('fixed:fixedrecord_list')
+            fixedrecord.save()
             messages.success(request, "Fixed record created successfully.")
             return redirect('fixed:fixedrecord_list')
     else:
@@ -26,11 +30,15 @@ def fixedrecord_create(request):
 
 @login_required
 def fixedrecord_update(request, pk):
-    fixedrecord = get_object_or_404(FixedRecord, pk=pk)
+    fixedrecord = get_object_or_404(FixedRecord, pk=pk, account__user=request.user)
     if request.method == 'POST':
         form = FixedRecordForm(request.POST, instance=fixedrecord)
         if form.is_valid():
-            form.save()
+            fixedrecord = form.save(commit=False)
+            if fixedrecord.account.user != request.user:
+                messages.error(request, "You cannot modify fixed records for accounts that are not yours.")
+                return redirect('fixed:fixedrecord_list')
+            fixedrecord.save()
             messages.success(request, "Fixed record updated successfully.")
             return redirect('fixed:fixedrecord_list')
     else:
@@ -40,7 +48,7 @@ def fixedrecord_update(request, pk):
 
 @login_required
 def fixedrecord_delete(request, pk):
-    fixedrecord = get_object_or_404(FixedRecord, pk=pk)
+    fixedrecord = get_object_or_404(FixedRecord, pk=pk, account__user=request.user)
     if request.method == 'POST':
         fixedrecord.delete()
         messages.success(request, "Fixed record deleted successfully.")

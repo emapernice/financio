@@ -1,5 +1,7 @@
 from django import forms
 from .models import FixedRecord
+from accounts.models import Account
+from records.models import Subcategory
 
 
 class FixedRecordForm(forms.ModelForm):
@@ -29,7 +31,14 @@ class FixedRecordForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields['account'].queryset = Account.objects.filter(user=user)
+
+            self.fields['subcategory'].queryset = Subcategory.objects.all()
+
         for field_name, field in self.fields.items():
             if field_name == 'is_active':
                 field.widget.attrs['class'] = 'form-check-input'
