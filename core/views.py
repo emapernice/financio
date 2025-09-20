@@ -4,6 +4,11 @@ from django.contrib.auth.decorators import login_required
 from .models import Currency, Entity, CurrencyExchange
 from .forms import CurrencyForm, EntityForm, CurrencyExchangeForm
 
+
+def home(request):
+    return render(request, 'home.html')
+
+
 @login_required
 def currency_list(request):
     currencies = Currency.objects.all()

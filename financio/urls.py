@@ -20,12 +20,13 @@ from django.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('core.urls', namespace='core')),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('records/', include('records.urls', namespace='records')),
-    path('core/', include('core.urls', namespace='core')),
     path('fixed/', include('fixed.urls', namespace='fixed')),
     path('budgets/', include('budgets.urls', namespace='budgets')),
     path('investments/', include('investments.urls', namespace='investments')),
     path('transfers/', include('transfers.urls', namespace='transfers')),
-    path("dashboard/", include("dashboard.urls", namespace="dashboard")),
+    path('dashboard/', include("dashboard.urls", namespace="dashboard")),
+    path('users/', include('users.urls', namespace='users')),
 ]

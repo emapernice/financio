@@ -73,11 +73,7 @@ class CurrencyExchange(models.Model):
         if self.exchange_rate <= 0:
             raise ValidationError("Exchange rate must be greater than zero.")
 
-        expected_rate = self.from_amount / self.to_amount
-        if round(self.exchange_rate, 6) != round(expected_rate, 6):
-            raise ValidationError(
-                f"Invalid exchange rate. Expected {expected_rate:.6f} based on amounts."
-            )
+        
 
     def save(self, *args, **kwargs):
         creating = self.pk is None

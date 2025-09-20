@@ -152,6 +152,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "dashboard"
+LOGOUT_REDIRECT_URL = "login"
+
 
 CRONJOBS = [
     ('5 0 * * *', 'fixed.cron.process_fixed_records', '>> /tmp/fixed_cron.log 2>&1'),

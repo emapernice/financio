@@ -1,54 +1,69 @@
-<nav class="navbar navbar-expand navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">Financio</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'accounts:account_list' %}">Accounts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'records:record_list' %}">Records</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'records:category_list' %}">Categories</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'records:subcategory_list' %}">Subcategories</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'core:currency_list' %}">Currencies</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'core:entity_list' %}">Entities</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'fixed:fixedrecord_list' %}">Fixed record</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'budgets:budget_list' %}">Budgets</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'investments:investment_list' %}">Investments</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'transfers:transfer_list' %}">Transfers</a>
-            </li>
-        </ul>
-
-        <ul class="navbar-nav">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
             {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Hello, {{ user.username }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Logout</a> 
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Login</a> 
-                </li>
+                <!-- Menú principal (solo si está autenticado) -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Dropdown Records -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="recordsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Records
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="recordsDropdown">
+                            <li><a class="dropdown-item" href="{% url 'records:record_list' %}">Records</a></li>
+                            <li><a class="dropdown-item" href="{% url 'records:category_list' %}">Categories</a></li>
+                            <li><a class="dropdown-item" href="{% url 'records:subcategory_list' %}">Subcategories</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Dropdown Core -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="coreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Core
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="coreDropdown">
+                            <li><a class="dropdown-item" href="{% url 'core:currency_list' %}">Currencies</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core:entity_list' %}">Entities</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Dropdown Finance -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Finance
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="financeDropdown">
+                            <li><a class="dropdown-item" href="{% url 'accounts:account_list' %}">Accounts</a></li>
+                            <li><a class="dropdown-item" href="{% url 'fixed:fixedrecord_list' %}">Fixed Records</a></li>
+                            <li><a class="dropdown-item" href="{% url 'budgets:budget_list' %}">Budgets</a></li>
+                            <li><a class="dropdown-item" href="{% url 'investments:investment_list' %}">Investments</a></li>
+                            <li><a class="dropdown-item" href="{% url 'transfers:transfer_list' %}">Transfers</a></li>
+                        </ul>
+                    </li>
+                </ul>
             {% endif %}
-        </ul>
-        
+
+            <!-- User menu -->
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'users:profile' %}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'users:logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </nav>

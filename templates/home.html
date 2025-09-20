@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Welcome</h1>
+
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          {% if user.is_authenticated %}
+            <h5 class="card-title">Hello {{ user.username }} 👋</h5>
+            <p class="card-text">
+              Access your dashboard to view balances, accounts, and more.
+            </p>
+            <a href="{% url 'dashboard:index' %}" class="btn btn-success">Go to Dashboard</a>
+          {% else %}
+            <h5 class="card-title">Welcome to your finance app</h5>
+            <p class="card-text">
+              Please log in or register to continue.
+            </p>
+            <a href="{% url 'users:login' %}" class="btn btn-primary">Log in</a>
+            <a href="{% url 'users:register' %}" class="btn btn-outline-secondary">Register</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

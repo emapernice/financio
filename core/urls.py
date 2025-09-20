@@ -4,6 +4,8 @@ from . import views
 app_name = 'core'
 
 urlpatterns = [
+    path('', views.home, name='home'),
+    
     path('curency/', views.currency_list, name='currency_list'),
     path('curency/create/', views.currency_create, name='currency_create'),
     path('curency/update/<int:pk>/', views.currency_update, name='currency_update'),
