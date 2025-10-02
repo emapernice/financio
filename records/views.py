@@ -10,8 +10,11 @@ from .forms import RecordForm, CategoryForm, SubcategoryForm
 
 @login_required
 def record_list(request):
-    records = Record.objects.select_related('account', 'currency', 'subcategory__category').order_by('-record_date')
-    accounts = Account.objects.all()
+    records = Record.objects.select_related('account', 'currency', 'subcategory__category') \
+                            .filter(account__user=request.user) \
+                            .order_by('-record_date')
+
+    accounts = Account.objects.filter(user=request.user)
 
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
@@ -23,7 +26,7 @@ def record_list(request):
     if end_date:
         records = records.filter(record_date__lte=end_date)
     if account:
-        records = records.filter(account_id=account)
+        records = records.filter(account_id=account, account__user=request.user)  
     if record_type:
         records = records.filter(record_type=record_type)
 
