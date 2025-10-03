@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models import Q  
 from .models import Record, Category, Subcategory
 
 
@@ -21,6 +22,14 @@ class RecordForm(forms.ModelForm):
             'record_type': forms.Select(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['subcategory'].queryset = Subcategory.objects.filter(
+                Q(category__user=user) | Q(category__user__isnull=True)
+            )
+
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -30,6 +39,12 @@ class CategoryForm(forms.ModelForm):
             'category_name': forms.TextInput(attrs={'class': 'form-control'}),
             'category_type': forms.Select(attrs={'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user and not self.instance.pk:
+            self.instance.user = user
 
 
 class SubcategoryForm(forms.ModelForm):
@@ -41,3 +56,11 @@ class SubcategoryForm(forms.ModelForm):
             'subcategory_name': forms.TextInput(attrs={'class': 'form-control'}),
             'is_fixed': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['category'].queryset = Category.objects.filter(
+                Q(user=user) | Q(user__isnull=True)
+            )

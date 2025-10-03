@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %} Subcategories {% endblock %}
+{% block title %}Subcategories{% endblock %}
 {% block content %} 
 
 <div class="card">
@@ -23,8 +23,12 @@
                   <td>{{ subcategory.subcategory_name }}</td>
                   <td>{{ subcategory.category.category_name }}</td>
                   <td>
-                    <a href="{% url 'records:subcategory_update' subcategory.pk %}" class="btn btn-primary">Update</a>
-                    <a href="{% url 'records:subcategory_delete' subcategory.pk %}" class="btn btn-danger">Delete</a>
+                    {% if subcategory.category.user == request.user %}
+                        <a href="{% url 'records:subcategory_update' subcategory.pk %}" class="btn btn-primary">Update</a>
+                        <a href="{% url 'records:subcategory_delete' subcategory.pk %}" class="btn btn-danger">Delete</a>
+                    {% else %}
+                        <span class="text-muted">Predefined</span>
+                    {% endif %}
                   </td>
                 </tr>
               {% empty %}

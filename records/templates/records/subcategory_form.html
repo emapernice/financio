@@ -11,15 +11,34 @@
         <div class="card-body">
             <form method="post" novalidate>
                 {% csrf_token %}
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+
+                {# Category field: solo mostrar categorías del usuario o predefinidas #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="text-danger small">{{ form.category.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Subcategory Name field #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.subcategory_name.id_for_label }}">{{ form.subcategory_name.label }}</label>
+                    {{ form.subcategory_name }}
+                    {% if form.subcategory_name.errors %}
+                        <div class="text-danger small">{{ form.subcategory_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Is Fixed checkbox #}
+                <div class="form-check mb-3">
+                    {{ form.is_fixed }}
+                    <label class="form-check-label" for="{{ form.is_fixed.id_for_label }}">{{ form.is_fixed.label }}</label>
+                    {% if form.is_fixed.errors %}
+                        <div class="text-danger small">{{ form.is_fixed.errors }}</div>
+                    {% endif %}
+                </div>
+
                 <button type="submit" class="btn btn-success">Save</button>
                 <a href="{% url 'records:subcategory_list' %}" class="btn btn-secondary">Cancel</a>
             </form>
