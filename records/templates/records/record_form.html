@@ -9,21 +9,127 @@
             <h4 class="mb-0">{{ form.instance.pk|yesno:"Edit Record,Create Record" }}</h4>
         </div>
         <div class="card-body">
-            <form method="post" novalidate>
+            <form method="post" novalidate id="recordForm">
                 {% csrf_token %}
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.record_type.id_for_label }}" class="form-label">{{ form.record_type.label }}</label>
+                    {{ form.record_type }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.account.id_for_label }}" class="form-label">{{ form.account.label }}</label>
+                    {{ form.account }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.record_amount.id_for_label }}" class="form-label">{{ form.record_amount.label }}</label>
+                    {{ form.record_amount }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.currency.id_for_label }}" class="form-label">{{ form.currency.label }}</label>
+                    {{ form.currency }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.entity.id_for_label }}" class="form-label">{{ form.entity.label }}</label>
+                    {{ form.entity }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.subcategory.id_for_label }}" class="form-label">{{ form.subcategory.label }}</label>
+                    {{ form.subcategory }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.record_description.id_for_label }}" class="form-label">{{ form.record_description.label }}</label>
+                    {{ form.record_description }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.record_date.id_for_label }}" class="form-label">{{ form.record_date.label }}</label>
+                    {{ form.record_date }}
+                </div>
+
                 <button type="submit" class="btn btn-success">Save</button>
                 <a href="{% url 'records:record_list' %}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const recordTypeSelect = document.getElementById("id_record_type");
+    const subcategorySelect = document.getElementById("id_subcategory");
+    const entitySelect = document.getElementById("id_entity");
+    const accountSelect = document.getElementById("id_account");
+    const currencySelect = document.getElementById("id_currency");
+    const form = document.getElementById("recordForm");
+
+    accountSelect.addEventListener("change", function () {
+        const accountId = this.value;
+        if (!accountId) {
+            currencySelect.innerHTML = "<option value=''>---------</option>";
+            return;
+        }
+
+        fetch(`/records/get_account_currency/${accountId}/`)
+            .then(response => response.json())
+            .then(data => {
+                currencySelect.innerHTML = "";
+                const option = document.createElement("option");
+                option.text = data.currency;
+                option.value = data.currency_id;
+                currencySelect.appendChild(option);
+                currencySelect.disabled = true;
+
+                let hiddenInput = document.getElementById("hidden_currency_input");
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement("input");
+                    hiddenInput.type = "hidden";
+                    hiddenInput.name = "currency";
+                    hiddenInput.id = "hidden_currency_input";
+                    form.appendChild(hiddenInput);
+                }
+                hiddenInput.value = data.currency_id;
+            })
+            .catch(error => console.error("Error loading currency:", error));
+    });
+
+    recordTypeSelect.addEventListener("change", function () {
+        const recordType = this.value;
+        if (!recordType) return;
+
+        fetch(`/records/get_subcategories/?type=${recordType}`)
+            .then(response => response.json())
+            .then(data => {
+                subcategorySelect.innerHTML = "";
+                data.subcategories.forEach(sub => {
+                    const option = document.createElement("option");
+                    option.value = sub.id;
+                    option.textContent = sub.name;
+                    subcategorySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error loading subcategories:", error));
+
+        fetch(`/records/get_entities/?type=${recordType}`)
+            .then(response => response.json())
+            .then(data => {
+                entitySelect.innerHTML = "";
+                data.entities.forEach(ent => {
+                    const option = document.createElement("option");
+                    option.value = ent.id;
+                    option.textContent = ent.name;
+                    entitySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error loading entities:", error));
+    });
+});
+</script>
+{% endblock %}
 {% endblock %}

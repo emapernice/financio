@@ -18,4 +18,8 @@ urlpatterns = [
     path('subcategory/create/', views.subcategory_create, name='subcategory_create'),
     path('subcategory/update/<int:pk>/', views.subcategory_update, name='subcategory_update'),
     path('subcategory/delete/<int:pk>/', views.subcategory_delete, name='subcategory_delete'),
+
+    path('get_subcategories/', views.get_subcategories, name='get_subcategories'),
+    path('get_entities/', views.get_entities, name='get_entities'),
+    path('get_account_currency/<int:account_id>/', views.get_account_currency, name='get_account_currency'),
 ]

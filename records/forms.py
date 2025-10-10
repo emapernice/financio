@@ -1,34 +1,59 @@
 from django import forms
-from django.db.models import Q  
+from django.db.models import Q
+from django.core.exceptions import ValidationError
 from .models import Record, Category, Subcategory
+from core.models import Entity
 
 
 class RecordForm(forms.ModelForm):
     class Meta:
         model = Record
         fields = [
-            'record_type', 'account', 'transfer_account', 'record_amount', 'currency', 'entity',
-            'subcategory', 'record_description', 'record_date'
+            'record_type', 'account', 'record_amount', 'currency',
+            'entity', 'subcategory', 'record_description', 'record_date'
         ]
         widgets = {
             'record_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'record_description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'record_amount': forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control'}),
-            'transfer_account': forms.Select(attrs={'class': 'form-control'}),
             'account': forms.Select(attrs={'class': 'form-control'}),
-            'currency': forms.Select(attrs={'class': 'form-control'}),
+            'currency': forms.Select(attrs={
+                'class': 'form-control bg-light text-muted',
+                'readonly': 'readonly',
+                'disabled': 'disabled',
+            }),
             'entity': forms.Select(attrs={'class': 'form-control'}),
             'subcategory': forms.Select(attrs={'class': 'form-control'}),
             'record_type': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        if user:
+
+        if self.user:
             self.fields['subcategory'].queryset = Subcategory.objects.filter(
-                Q(category__user=user) | Q(category__user__isnull=True)
+                Q(category__user=self.user) | Q(category__user__isnull=True)
+            ).exclude(
+                Q(category__category_name__icontains='transfer') |
+                Q(subcategory_name__icontains='transfer')
             )
+
+            self.fields['entity'].queryset = Entity.objects.all()
+
+        self.fields['currency'].empty_label = "Select an account first"
+        self.fields['subcategory'].empty_label = "Select record type first"
+        self.fields['entity'].empty_label = "---------"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        account = cleaned_data.get("account")
+        currency = cleaned_data.get("currency")
+
+        if account and currency:
+            if account.currency != currency:
+                raise ValidationError("Currency does not match the selected account.")
+        return cleaned_data
 
 
 class CategoryForm(forms.ModelForm):

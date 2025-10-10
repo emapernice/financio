@@ -5,7 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Record, Category, Subcategory, Account
 from .forms import RecordForm, CategoryForm, SubcategoryForm
-
+from django.http import JsonResponse
+from core.models import Entity
+from accounts.models import Account
 
 # -------------------- Record --------------------
 
@@ -189,3 +191,52 @@ def subcategory_delete(request, pk):
         messages.success(request, "Subcategory deleted successfully.")
         return redirect('records:subcategory_list')
     return render(request, 'records/subcategory_confirm_delete.html', {'subcategory': subcategory})
+
+def get_subcategories(request):
+    record_type = request.GET.get("type")
+    user = request.user
+
+    if not record_type:
+        return JsonResponse({"error": "Missing type parameter"}, status=400)
+
+    subcategories = Subcategory.objects.filter(
+        Q(category__category_type=record_type),
+        Q(category__user=user) | Q(category__user__isnull=True)
+    ).order_by("subcategory_name")
+
+    data = {"subcategories": [{"id": s.id, "name": s.subcategory_name} for s in subcategories]}
+    return JsonResponse(data)
+
+
+@login_required
+def get_entities(request):
+    record_type = request.GET.get("type")
+
+    if not record_type:
+        return JsonResponse({"error": "Missing type parameter"}, status=400)
+
+    entity_type = "INCOME_SOURCE" if record_type == "income" else "SUPPLIER"
+    entities = Entity.objects.filter(entity_type=entity_type).order_by("entity_name")
+
+    data = {
+        "entities": [{"id": "", "name": "---------"}]  
+        + [{"id": e.id, "name": e.entity_name} for e in entities]
+    }
+    return JsonResponse(data)
+
+
+@login_required
+def get_account_currency(request, account_id):
+    try:
+        account = Account.objects.get(id=account_id, user=request.user)
+    except Account.DoesNotExist:
+        return JsonResponse({"error": "Account not found"}, status=404)
+
+    if not account.currency:
+        return JsonResponse({"error": "This account has no currency associated."}, status=400)
+
+    data = {
+        "currency": f"{account.currency.currency_code} - {account.currency.currency_name}",
+        "currency_id": account.currency.id,
+    }
+    return JsonResponse(data, status=200)
