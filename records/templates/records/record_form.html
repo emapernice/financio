@@ -84,7 +84,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 option.text = data.currency;
                 option.value = data.currency_id;
                 currencySelect.appendChild(option);
-                currencySelect.disabled = true;
+                currencySelect.readOnly = true;
+                currencySelect.style.pointerEvents = "none";
 
                 let hiddenInput = document.getElementById("hidden_currency_input");
                 if (!hiddenInput) {
@@ -129,6 +130,10 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error("Error loading entities:", error));
     });
+    if (accountSelect.value) {
+    currencySelect.readOnly = true;
+    currencySelect.style.pointerEvents = "none";
+}
 });
 </script>
 {% endblock %}

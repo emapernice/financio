@@ -20,8 +20,7 @@ class RecordForm(forms.ModelForm):
             'currency': forms.Select(attrs={
                 'class': 'form-control bg-light text-muted',
                 'readonly': 'readonly',
-                'disabled': 'disabled',
-            }),
+            }),                                                                             
             'entity': forms.Select(attrs={'class': 'form-control'}),
             'subcategory': forms.Select(attrs={'class': 'form-control'}),
             'record_type': forms.Select(attrs={'class': 'form-control'}),
@@ -50,9 +49,16 @@ class RecordForm(forms.ModelForm):
         account = cleaned_data.get("account")
         currency = cleaned_data.get("currency")
 
-        if account and currency:
-            if account.currency != currency:
-                raise ValidationError("Currency does not match the selected account.")
+        if not account:
+            return cleaned_data
+
+        if not currency and account.currency:
+            cleaned_data["currency"] = account.currency
+            return cleaned_data
+
+        if currency and account.currency != currency:
+            raise ValidationError("The selected currency does not match the account currency.")
+
         return cleaned_data
 
 
