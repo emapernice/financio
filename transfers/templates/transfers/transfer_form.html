@@ -9,26 +9,93 @@
             <h4 class="mb-0">{{ form.instance.pk|yesno:"Edit Transfer,Create Transfer" }}</h4>
         </div>
         <div class="card-body">
-            <form method="post">
+            <form method="post" novalidate id="transferForm">
                 {% csrf_token %}
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.help_text %}
-                            <div class="form-text">{{ field.help_text }}</div>
-                        {% endif %}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                <button type="submit" class="btn btn-success">
-                    {{ form.instance.pk|yesno:"Update,Save" }}
-                </button>
+
+                <div class="mb-3">
+                    <label for="{{ form.from_account.id_for_label }}" class="form-label">{{ form.from_account.label }}</label>
+                    {{ form.from_account }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.to_account.id_for_label }}" class="form-label">{{ form.to_account.label }}</label>
+                    {{ form.to_account }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.transfer_amount.id_for_label }}" class="form-label">{{ form.transfer_amount.label }}</label>
+                    {{ form.transfer_amount }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.transfer_date.id_for_label }}" class="form-label">{{ form.transfer_date.label }}</label>
+                    {{ form.transfer_date }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.transfer_description.id_for_label }}" class="form-label">{{ form.transfer_description.label }}</label>
+                    {{ form.transfer_description }}
+                </div>
+
+                <button type="submit" class="btn btn-success">{{ form.instance.pk|yesno:"Update,Save" }}</button>
                 <a href="{% url 'transfers:transfer_list' %}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const fromAccountSelect = document.getElementById("id_from_account");
+    const toAccountSelect = document.getElementById("id_to_account");
+    const form = document.getElementById("transferForm");
+
+    let hiddenCurrency = document.getElementById("hidden_currency_input");
+    if (!hiddenCurrency) {
+        hiddenCurrency = document.createElement("input");
+        hiddenCurrency.type = "hidden";
+        hiddenCurrency.name = "currency";
+        hiddenCurrency.id = "hidden_currency_input";
+        form.appendChild(hiddenCurrency);
+    }
+
+    fromAccountSelect.addEventListener("change", function () {
+        const fromAccountId = this.value;
+
+        if (!fromAccountId) {
+            hiddenCurrency.value = "";
+            toAccountSelect.innerHTML = "<option value=''>---------</option>";
+            return;
+        }
+
+        fetch(`/transfers/get_account_currency/${fromAccountId}/`)
+            .then(res => res.json())
+            .then(data => {
+                hiddenCurrency.value = data.currency_id;
+
+                fetch(`/transfers/get_accounts_by_currency/${fromAccountId}/`)
+                    .then(res => res.json())
+                    .then(result => {
+                        toAccountSelect.innerHTML = "<option value=''>---------</option>";
+                        result.accounts.forEach(acc => {
+                            if (acc.id != parseInt(fromAccountId)) {
+                                const opt = document.createElement("option");
+                                opt.value = acc.id;
+                                opt.textContent = acc.account_name;
+                                toAccountSelect.appendChild(opt);
+                            }
+                        });
+                    })
+                    .catch(err => console.error("Error loading destination accounts:", err));
+            })
+            .catch(err => console.error("Error loading currency:", err));
+    });
+
+    if (fromAccountSelect.value) {
+        fromAccountSelect.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+{% endblock %}
 {% endblock %}
