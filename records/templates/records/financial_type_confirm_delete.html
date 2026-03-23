@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %} Delete Financial Type {% endblock %}
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Delete Financial Type</h4>
+    </div>
+    <div class="card-body">
+        <p>Are you sure you want to delete this financial type?</p>
+
+        <ul>
+            <li><strong>Name:</strong> {{ financial_type.finance_name }}</li>
+            <li><strong>Code:</strong> {{ financial_type.finance_code }}</li>
+            <li>
+                <strong>Affects Balance:</strong>
+                {% if financial_type.affects_balance %}
+                    Yes
+                {% else %}
+                    No
+                {% endif %}
+            </li>
+        </ul>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'records:financial_type_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+{% endblock %}

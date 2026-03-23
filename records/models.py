@@ -3,7 +3,17 @@ from django.conf import settings
 from accounts.models import Account
 from core.models import Currency, Entity, CurrencyExchange
 
+class FinancialType(models.Model):
+    finance_name = models.CharField(max_length=100)
+    finance_code = models.CharField(max_length=50, unique=True)
+    affects_balance = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ["finance_name"]
+
+    def __str__(self):
+        return f"{self.finance_name} ({self.finance_code})"
+    
 class Category(models.Model):
     CATEGORY_TYPES = [
         ('income', 'Income'),
@@ -37,6 +47,13 @@ class Category(models.Model):
 class Subcategory(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='subcategories'
+    )
+    financial_type = models.ForeignKey(
+        FinancialType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="subcategories"
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

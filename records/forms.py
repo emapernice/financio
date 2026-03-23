@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-from .models import Record, Category, Subcategory
+from .models import Record, Category, Subcategory, FinancialType
 from core.models import Entity
 
 
@@ -81,17 +81,38 @@ class CategoryForm(forms.ModelForm):
 class SubcategoryForm(forms.ModelForm):
     class Meta:
         model = Subcategory
-        fields = ['category', 'subcategory_name', 'is_fixed']
+        fields = [
+            'category',
+            'subcategory_name',
+            'financial_type',  
+            'is_fixed'
+        ]
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
             'subcategory_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'financial_type': forms.Select(attrs={'class': 'form-control'}),
             'is_fixed': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
         if user:
             self.fields['category'].queryset = Category.objects.filter(
                 Q(user=user) | Q(user__isnull=True)
             )
+
+        self.fields['financial_type'].queryset = FinancialType.objects.order_by('finance_name')
+
+        self.fields['financial_type'].empty_label = "Select financial type"
+
+class FinancialTypeForm(forms.ModelForm):
+    class Meta:
+        model = FinancialType
+        fields = ['finance_name', 'finance_code', 'affects_balance']
+        widgets = {
+            'finance_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'finance_code': forms.TextInput(attrs={'class': 'form-control'}),
+            'affects_balance': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }

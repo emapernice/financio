@@ -3,19 +3,27 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .models import Record, Category, Subcategory, Account
-from .forms import RecordForm, CategoryForm, SubcategoryForm
 from django.http import JsonResponse
+
+from .models import Record, Category, Subcategory, FinancialType
+from .forms import RecordForm, CategoryForm, SubcategoryForm, FinancialTypeForm
+
 from core.models import Entity
 from accounts.models import Account
+
 
 # -------------------- Record --------------------
 
 @login_required
 def record_list(request):
-    records = Record.objects.select_related('account', 'currency', 'subcategory__category') \
-                            .filter(account__user=request.user) \
-                            .order_by('-record_date')
+    records = Record.objects.select_related(
+        'account',
+        'currency',
+        'subcategory__category',
+        'subcategory__financial_type'
+    ).filter(
+        account__user=request.user
+    ).order_by('-record_date')
 
     accounts = Account.objects.filter(user=request.user)
 
@@ -45,6 +53,7 @@ def record_list(request):
         'selected_account': account,
         'selected_record_type': record_type,
     }
+
     return render(request, 'records/record_list.html', context)
 
 
@@ -59,12 +68,14 @@ def record_create(request):
             return redirect('records:record_list')
     else:
         form = RecordForm(user=request.user)
+
     return render(request, 'records/record_form.html', {'form': form})
 
 
 @login_required
 def record_update(request, pk):
     record = get_object_or_404(Record, pk=pk, account__user=request.user)
+
     if request.method == 'POST':
         form = RecordForm(request.POST, instance=record, user=request.user)
         if form.is_valid():
@@ -73,16 +84,19 @@ def record_update(request, pk):
             return redirect('records:record_list')
     else:
         form = RecordForm(instance=record, user=request.user)
+
     return render(request, 'records/record_form.html', {'form': form})
 
 
 @login_required
 def record_delete(request, pk):
     record = get_object_or_404(Record, pk=pk, account__user=request.user)
+
     if request.method == 'POST':
         record.delete()
         messages.success(request, "Record deleted successfully.")
         return redirect('records:record_list')
+
     return render(request, 'records/record_confirm_delete.html', {'record': record})
 
 
@@ -113,12 +127,14 @@ def category_create(request):
             return redirect('records:category_list')
     else:
         form = CategoryForm(user=request.user)
+
     return render(request, 'records/category_form.html', {'form': form})
 
 
 @login_required
 def category_update(request, pk):
     category = get_object_or_404(Category, pk=pk, user=request.user)
+
     if request.method == 'POST':
         form = CategoryForm(request.POST, instance=category, user=request.user)
         if form.is_valid():
@@ -127,16 +143,19 @@ def category_update(request, pk):
             return redirect('records:category_list')
     else:
         form = CategoryForm(instance=category, user=request.user)
+
     return render(request, 'records/category_form.html', {'form': form})
 
 
 @login_required
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk, user=request.user)
+
     if request.method == 'POST':
         category.delete()
         messages.success(request, "Category deleted successfully.")
         return redirect('records:category_list')
+
     return render(request, 'records/category_confirm_delete.html', {'category': category})
 
 
@@ -144,7 +163,10 @@ def category_delete(request, pk):
 
 @login_required
 def subcategory_list(request):
-    subcategories = Subcategory.objects.select_related('category').filter(
+    subcategories = Subcategory.objects.select_related(
+        'category',
+        'financial_type'
+    ).filter(
         Q(category__user=request.user) | Q(category__user__isnull=True)
     ).order_by('subcategory_name')
 
@@ -166,12 +188,18 @@ def subcategory_create(request):
             return redirect('records:subcategory_list')
     else:
         form = SubcategoryForm(user=request.user)
+
     return render(request, 'records/subcategory_form.html', {'form': form})
 
 
 @login_required
 def subcategory_update(request, pk):
-    subcategory = get_object_or_404(Subcategory, pk=pk, category__user=request.user)
+    subcategory = get_object_or_404(
+        Subcategory,
+        pk=pk,
+        category__user=request.user
+    )
+
     if request.method == 'POST':
         form = SubcategoryForm(request.POST, instance=subcategory, user=request.user)
         if form.is_valid():
@@ -180,18 +208,84 @@ def subcategory_update(request, pk):
             return redirect('records:subcategory_list')
     else:
         form = SubcategoryForm(instance=subcategory, user=request.user)
+
     return render(request, 'records/subcategory_form.html', {'form': form})
 
 
 @login_required
 def subcategory_delete(request, pk):
-    subcategory = get_object_or_404(Subcategory, pk=pk, category__user=request.user)
+    subcategory = get_object_or_404(
+        Subcategory,
+        pk=pk,
+        category__user=request.user
+    )
+
     if request.method == 'POST':
         subcategory.delete()
         messages.success(request, "Subcategory deleted successfully.")
         return redirect('records:subcategory_list')
+
     return render(request, 'records/subcategory_confirm_delete.html', {'subcategory': subcategory})
 
+
+# -------------------- Financial Type --------------------
+
+@login_required
+def financial_type_list(request):
+    financial_types = FinancialType.objects.all().order_by('finance_name')
+
+    paginator = Paginator(financial_types, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'records/financial_type_list.html', {'page_obj': page_obj})
+
+
+@login_required
+def financial_type_create(request):
+    if request.method == 'POST':
+        form = FinancialTypeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Financial type saved successfully.")
+            return redirect('records:financial_type_list')
+    else:
+        form = FinancialTypeForm()
+
+    return render(request, 'records/financial_type_form.html', {'form': form})
+
+
+@login_required
+def financial_type_update(request, pk):
+    financial_type = get_object_or_404(FinancialType, pk=pk)
+
+    if request.method == 'POST':
+        form = FinancialTypeForm(request.POST, instance=financial_type)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Financial type updated successfully.")
+            return redirect('records:financial_type_list')
+    else:
+        form = FinancialTypeForm(instance=financial_type)
+
+    return render(request, 'records/financial_type_form.html', {'form': form})
+
+
+@login_required
+def financial_type_delete(request, pk):
+    financial_type = get_object_or_404(FinancialType, pk=pk)
+
+    if request.method == 'POST':
+        financial_type.delete()
+        messages.success(request, "Financial type deleted successfully.")
+        return redirect('records:financial_type_list')
+
+    return render(request, 'records/financial_type_confirm_delete.html', {'financial_type': financial_type})
+
+
+# -------------------- AJAX --------------------
+
+@login_required
 def get_subcategories(request):
     record_type = request.GET.get("type")
     user = request.user
@@ -204,7 +298,13 @@ def get_subcategories(request):
         Q(category__user=user) | Q(category__user__isnull=True)
     ).order_by("subcategory_name")
 
-    data = {"subcategories": [{"id": s.id, "name": s.subcategory_name} for s in subcategories]}
+    data = {
+        "subcategories": [
+            {"id": s.id, "name": s.subcategory_name}
+            for s in subcategories
+        ]
+    }
+
     return JsonResponse(data)
 
 
@@ -216,12 +316,16 @@ def get_entities(request):
         return JsonResponse({"error": "Missing type parameter"}, status=400)
 
     entity_type = "INCOME_SOURCE" if record_type == "income" else "SUPPLIER"
-    entities = Entity.objects.filter(entity_type=entity_type).order_by("entity_name")
+
+    entities = Entity.objects.filter(
+        entity_type=entity_type
+    ).order_by("entity_name")
 
     data = {
-        "entities": [{"id": "", "name": "---------"}]  
-        + [{"id": e.id, "name": e.entity_name} for e in entities]
+        "entities": [{"id": "", "name": "---------"}] +
+                    [{"id": e.id, "name": e.entity_name} for e in entities]
     }
+
     return JsonResponse(data)
 
 
@@ -233,10 +337,14 @@ def get_account_currency(request, account_id):
         return JsonResponse({"error": "Account not found"}, status=404)
 
     if not account.currency:
-        return JsonResponse({"error": "This account has no currency associated."}, status=400)
+        return JsonResponse(
+            {"error": "This account has no currency associated."},
+            status=400
+        )
 
     data = {
         "currency": f"{account.currency.currency_code} - {account.currency.currency_name}",
         "currency_id": account.currency.id,
     }
+
     return JsonResponse(data, status=200)

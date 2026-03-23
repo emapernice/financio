@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Financial Type{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">
+                {{ form.instance.pk|yesno:"Edit Financial Type,Create Financial Type" }}
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {# Finance Name field #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.finance_name.id_for_label }}">
+                        {{ form.finance_name.label }}
+                    </label>
+                    {{ form.finance_name }}
+                    {% if form.finance_name.errors %}
+                        <div class="text-danger small">{{ form.finance_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Finance Code field #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.finance_code.id_for_label }}">
+                        {{ form.finance_code.label }}
+                    </label>
+                    {{ form.finance_code }}
+                    {% if form.finance_code.errors %}
+                        <div class="text-danger small">{{ form.finance_code.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Affects Balance checkbox #}
+                <div class="form-check mb-3">
+                    {{ form.affects_balance }}
+                    <label class="form-check-label" for="{{ form.affects_balance.id_for_label }}">
+                        {{ form.affects_balance.label }}
+                    </label>
+                    {% if form.affects_balance.errors %}
+                        <div class="text-danger small">{{ form.affects_balance.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-success">Save</button>
+                <a href="{% url 'records:financial_type_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

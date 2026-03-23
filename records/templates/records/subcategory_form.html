@@ -12,9 +12,11 @@
             <form method="post" novalidate>
                 {% csrf_token %}
 
-                {# Category field: solo mostrar categorías del usuario o predefinidas #}
+                {# Category field #}
                 <div class="mb-3">
-                    <label class="form-label" for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                    <label class="form-label" for="{{ form.category.id_for_label }}">
+                        {{ form.category.label }}
+                    </label>
                     {{ form.category }}
                     {% if form.category.errors %}
                         <div class="text-danger small">{{ form.category.errors }}</div>
@@ -23,17 +25,32 @@
 
                 {# Subcategory Name field #}
                 <div class="mb-3">
-                    <label class="form-label" for="{{ form.subcategory_name.id_for_label }}">{{ form.subcategory_name.label }}</label>
+                    <label class="form-label" for="{{ form.subcategory_name.id_for_label }}">
+                        {{ form.subcategory_name.label }}
+                    </label>
                     {{ form.subcategory_name }}
                     {% if form.subcategory_name.errors %}
                         <div class="text-danger small">{{ form.subcategory_name.errors }}</div>
                     {% endif %}
                 </div>
 
+                {# Financial Type field (NUEVO) #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.financial_type.id_for_label }}">
+                        {{ form.financial_type.label }}
+                    </label>
+                    {{ form.financial_type }}
+                    {% if form.financial_type.errors %}
+                        <div class="text-danger small">{{ form.financial_type.errors }}</div>
+                    {% endif %}
+                </div>
+
                 {# Is Fixed checkbox #}
                 <div class="form-check mb-3">
                     {{ form.is_fixed }}
-                    <label class="form-check-label" for="{{ form.is_fixed.id_for_label }}">{{ form.is_fixed.label }}</label>
+                    <label class="form-check-label" for="{{ form.is_fixed.id_for_label }}">
+                        {{ form.is_fixed.label }}
+                    </label>
                     {% if form.is_fixed.errors %}
                         <div class="text-danger small">{{ form.is_fixed.errors }}</div>
                     {% endif %}
